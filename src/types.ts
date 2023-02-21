@@ -12,5 +12,5 @@ export interface Package {
         kind: "pr" | "prdel" | "add" | null;
         pr: string | null;
     },
-    mark: (DetailedMark | string)[];
+    marks: (DetailedMark | string)[];
 }

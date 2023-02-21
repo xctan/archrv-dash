@@ -43,28 +43,30 @@ const markTagType = (mark: any) => {
         {{ mark_inner.by }}
       </template>
       <template #reference>
-        <el-link
-          v-if="extractUrlInString(mark_inner.comment)"
-          :href="(extractUrlInString(mark_inner.comment) || ['/'])[0]"
-          target="_blank"
-        >
+        <span class="tag-text">
+          <el-link
+            v-if="extractUrlInString(mark_inner.comment)"
+            :href="(extractUrlInString(mark_inner.comment) || ['/'])[0]"
+            target="_blank"
+          >
+            <el-tag
+              :type="markTagType(mark_inner)"
+              :closable="false"
+            >
+              {{ mark_inner.name }}
+            </el-tag>
+          </el-link>
           <el-tag
+            v-else
             :type="markTagType(mark_inner)"
             :closable="false"
           >
             {{ mark_inner.name }}
           </el-tag>
-        </el-link>
-        <el-tag
-          v-else
-          :type="markTagType(mark_inner)"
-          :closable="false"
-        >
-          {{ mark_inner.name }}
-        </el-tag>
+        </span>
       </template>
     </el-popover>
-    <span v-else>
+    <span v-else class="tag-text">
       <el-tag
         :key="mark_inner"
         :type="markTagType(mark_inner)"
@@ -77,4 +79,7 @@ const markTagType = (mark: any) => {
 </template>
 
 <style scoped>
+.tag-text {
+  user-select: none;
+}
 </style>

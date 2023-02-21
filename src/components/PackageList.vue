@@ -45,7 +45,7 @@ const tableData: Package[] = await fetchData('');
     <el-table-column :formatter="workFormatter" label="Work" width="120" />
     <el-table-column label="Marks">
       <template #default="{ row }">
-        <span v-for="mark in row.mark">
+        <span v-for="mark in row.marks">
           <MarkTag :mark="mark" class="mr-2" />
         </span>
       </template>
