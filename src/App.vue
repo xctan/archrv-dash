@@ -4,6 +4,7 @@ import { TableColumnCtx } from 'element-plus';
 import ArchLinuxLogo from './assets/arch.svg';
 import { Package } from './types';
 import MarkTag from './components/MarkTag.vue';
+import { fetchData } from './subscribe';
 
 const workFormatter = (row: Package, column: TableColumnCtx<Package>) => {
   switch (row.work.kind) {
@@ -18,43 +19,7 @@ const workFormatter = (row: Package, column: TableColumnCtx<Package>) => {
   }
 }
 
-const tableData: Package[] = [
-  {
-    name: "glib2",
-    felix: "dir",
-    user: null,
-    work: {
-      kind: null,
-      pr: null,
-    },
-    mark: [
-      "triage-check-failed",
-      "patched"
-    ]
-  },
-  {
-    name: "guile",
-    felix: "dir",
-    user: "shimarin",
-    work: {
-      kind: "add",
-      pr: null,
-    },
-    mark: [
-      "triage-check-failed",
-      {
-        name: "failing",
-        comment: "2023/1/27 19:17:05 (UTC+8)",
-        by: "null (bot)"
-      },
-      {
-        name: "upstreamed",
-        comment: "https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50730",
-        by: "shimarin"
-      }
-    ]
-  }
-]
+const tableData: Package[] = await fetchData('');
 
 const tableRowClassName = ({ row, rowIndex }: { row: Package, rowIndex: number }) => {
   
