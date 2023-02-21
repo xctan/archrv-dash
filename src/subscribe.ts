@@ -1,11 +1,14 @@
-import { Package, DetailedMark } from "./types"
+import { Package, DetailedMark, MelonStatus } from "./types"
 
 export const fetchData = async (url: string): Promise<Package[]> => {
+  console.time("fetch data")
   const foo = await fetch("https://archrv-status.xctan.workers.dev/raw");
   const data = await foo.json();
+  console.timeEnd("fetch data")
   const dataset: {[key: string]: Package} = {};
   
   // data from felix is an html document
+  console.time("parse felix")
   const felix_dom = new DOMParser().parseFromString(data.source.FelixStatus, "text/html");
   for (const tr of Array.from(felix_dom.querySelectorAll("tr"))) {
     const name = tr.querySelector("td:nth-child(2)")?.textContent;
@@ -26,12 +29,13 @@ export const fetchData = async (url: string): Promise<Package[]> => {
     const re_dep = /Dependency '(.*)' not satisfied\./;
     const dep_match = status.match(re_dep);
     if (dep_match) {
-      felix = "dep";
-      marks.push({
-        name: "missing_dep",
-        by: "null (felix)",
-        comment: dep_match[1],
-      })
+      // felix = "dep";
+      // marks.push({
+      //   name: "missing-dep",
+      //   by: "null (felix)",
+      //   comment: dep_match[1],
+      // })
+      continue;
     }
 
     const triage = tr.querySelector('span.badge.bg-danger');
@@ -65,6 +69,52 @@ export const fetchData = async (url: string): Promise<Package[]> => {
       marks,
     }
   }
+  console.timeEnd("parse felix")
+
+  // transform data from melon
+  console.time("parse melon")
+  const melon: MelonStatus = JSON.parse(data.source.MelonBot);
+  for (const user of melon.workList) {
+    for (const pkg of user.packages) {
+      if (dataset[pkg]) {
+        dataset[pkg].user = user.alias;
+      } else {
+        // possibly a joke package
+        dataset[pkg] = {
+          name: pkg,
+          felix: "nx",
+          user: user.alias,
+          work: {
+            kind: null,
+            pr: null,
+          },
+          marks: ['non-existent?'],
+        }
+      }
+    }
+  }
+  for (const pkg of melon.markList) {
+    if (!dataset[pkg.name]) {
+      dataset[pkg.name] = {
+        name: pkg.name,
+        felix: "nx",
+        user: null,
+        work: {
+          kind: null,
+          pr: null,
+        },
+        marks: [],
+      }
+    }
+    for (const mark of pkg.marks) {
+      dataset[pkg.name].marks.push({
+        name: mark.name,
+        by: mark.by.alias,
+        comment: mark.comment,
+      })
+    }
+  }
+  console.timeEnd("parse melon")
   
   return Object.values(dataset);
 }

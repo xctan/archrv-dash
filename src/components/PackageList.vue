@@ -23,7 +23,7 @@ const tableRowClassName = ({ row, rowIndex }: { row: Package, rowIndex: number }
   return '';
 };
 
-const tableData: Package[] = await fetchData('');
+const tableData: Package[] = (await fetchData('')).filter((p) => p.marks.length > 0);
 </script>
 
 <template>
