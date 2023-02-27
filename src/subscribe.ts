@@ -55,7 +55,11 @@ export const fetchData = async (url: string): Promise<Package[]> => {
     }
 
     if (tr.querySelector('span.badge.bg-secondary')) {
-      marks.push('patched');
+      marks.push({
+        name: "patched",
+        by: "null",
+        comment: `https://github.com/felixonmars/archriscv-packages/tree/master/${encodeURIComponent(name)}`,
+      });
     }
     
     dataset[name] = {
