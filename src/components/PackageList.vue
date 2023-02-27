@@ -30,7 +30,7 @@ const tableData: Package[] = (await fetchData('')).filter((p) => p.marks.length 
   <el-table :data="tableData" style="width: 100%" height="100%" :row-class-name="tableRowClassName">
     <el-table-column prop="name" label="Name" width="300">
       <template #default="{ row }">
-        <el-link :href="`https://archlinux.org/packages/?q=${row.name}`" class="mr-4" target="_blank">
+        <el-link :href="`https://archlinux.org/packages/?q=${encodeURIComponent(row.name)}`" class="mr-4" target="_blank">
           <el-icon size="6">
             <img :src="ArchLinuxLogo" alt="" style="width: 4em">
           </el-icon>
